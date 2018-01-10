@@ -5,6 +5,22 @@ var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
+let serverName; //서버영문명칭
+let characterId; //캐릭터 고유 코드
+let characterName; //캐릭터 명칭(URL 인코딩필요)
+let wordType; //검색타입
+let limit; //반환 Row 수
+let sort=unitPrice; //가격별 정렬
+
+let itemId; //아이템 고유 코드
+let itemName //아이템 명칭(URL 인코딩 필요)
+let q=; //검색 관련 요청 변수
+let auctionNo //경매장 등록 번호
+
+
+
+
+
 
 app.get('/keyboard', function (req, res) {
     let keyboard = {
