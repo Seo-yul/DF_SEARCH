@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-let APIkey = "";
+let APIkey ;
 
 let serverName; //서버영문명칭
 let characterId; //캐릭터 고유 코드
@@ -30,7 +30,7 @@ var jobGrowName;
 function basicCharaterSearch(name) {
     wordType = "match";
     characterName = encodeURIComponent(name);
-    url = 'https://api.neople.co.kr/df/servers/' + serverName + '/characters?characterName=' + characterName + ' & wordType=' + wordType + ' & apikey=' + APIkey;
+    url = 'https://api.neople.co.kr/df/servers/' + serverName + '/characters?characterName=' + characterName + '&wordType=' + wordType + '&apikey=' + APIkey;
 
 }
 
@@ -93,7 +93,10 @@ app.post('/message', function (req, res) {
             basicCharaterSearch(findex[2]);
             request(url, function (error, res, json) {
                 if (error) { throw error }
+                console.log(url);
                 console.log(json);
+            for(var key in res.body.rows)
+                console.log(key, res.body.rows[key]);
             }
             )
         }
