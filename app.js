@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
 
-let APIkey ;
+let APIkey;
 
 let serverName; //서버영문명칭
 let characterId; //캐릭터 고유 코드
@@ -20,6 +20,7 @@ let q; //검색 관련 요청 변수
 let auctionNo //경매장 등록 번호
 let url;
 
+let objna;
 let koserver = ['안톤', '바칼', '카인', "카시야스", "디레지에", "힐더", "프레이", "시로코"];
 let enserver = ['anton', 'bakal', 'cain', 'casillas', 'diregie', 'hillder', 'prey', 'siroco'];
 let botsay = "검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명";
@@ -88,17 +89,23 @@ app.post('/message', function (req, res) {
         let findex = content.split(",");
 
         if (findex[0] == 1) {
-            botsay = "캐릭터검색 호출"
+            //botsay = "캐릭터검색 호출"
             setServer(findex[1]);
             basicCharaterSearch(findex[2]);
             request(url, function (error, res, json) {
+
+                objna = $.parseJSON(json)
+                characterId = objna.characterId;
                 if (error) { throw error }
                 console.log(url);
                 console.log(json);
-            for(var key in res.body.rows)
-                console.log(key, res.body.rows[key]);
+                console.log(objna);
+                console.log(objna.characterName);
+                console.log(objna.level);
+                console.log(objna.jobGrowName);
             }
             )
+            botsay = "ID: " + objna.characterName + "\n Lv: " + objna.level + "\n 직업: " + objna.jobGrowName;
         }
         else if (findex[0] == 2) { botsay = "경매장검색 호출" }
         else if (findex[0] == 3) { botsay = "아이템검색 호출" }
@@ -106,7 +113,20 @@ app.post('/message', function (req, res) {
     }
 
 
-
+    // {
+    //     "rows":
+    //     [
+    //         {
+    //             "characterId": "e88bfdbf0567b737d4a8970a42ca37b0",
+    //             "characterName": "하얀우산",
+    //             "level": 90,
+    //             "jobId": "41f1cdc2ff58bb5fdc287be0db2a8df3",
+    //             "jobGrowId": "80ec67d0356defa46a989914caca5820",
+    //             "jobName": "귀검사(남)",
+    //             "jobGrowName": "검신"
+    //         }
+    //     ]
+    // }
 
 
 
