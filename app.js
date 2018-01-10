@@ -54,7 +54,7 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 2) { }
         else if (findex[0] == 3) { }
     }
-    let botsay = "검색기 사용법 \n 캐릭터 검색: 1, [서버명], [캐릭터명] \n 경매장 검색: 2, [아이템명] \n 아이템 검색: 3, [아이템명]";
+    let botsay = "검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명";
 
     if ("캐릭터" == content) {
         botsay = "1, [서버], [캐릭터명]";
@@ -63,7 +63,7 @@ app.post('/message', function (req, res) {
     } else if ("아이템" == content) {
         botsay = "3, [아이템명]";
     } else {
-        break;
+
     }
     let answer = {
         "message": {
