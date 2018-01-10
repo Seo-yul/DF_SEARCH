@@ -1,6 +1,6 @@
 var express = require('express');
 var app = express();
-
+var request = require('request')
 var bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
@@ -18,20 +18,57 @@ let itemId; //아이템 고유 코드
 let itemName //아이템 명칭(URL 인코딩 필요)
 let q; //검색 관련 요청 변수
 let auctionNo //경매장 등록 번호
-
-
-var koserver = ['안톤', '바칼', '카인', "카시야스", "디레지에", "힐더", "프레이", "시로코"];
-var enserver = ['anton', 'bakal', 'cain', 'casillas', 'diregie', 'hillder', 'prey', 'siroco'];
-
-
-
-const qs = require('querystring'); //인코딩용     //`https://api.neople.co.kr/df/items?&apikey=<APIKey>&itemName=${qs.escape(itemName)}`;
 let url;
 
-function basicCharaterSearch(server, name) {
+let koserver = ['안톤', '바칼', '카인', "카시야스", "디레지에", "힐더", "프레이", "시로코"];
+let enserver = ['anton', 'bakal', 'cain', 'casillas', 'diregie', 'hillder', 'prey', 'siroco'];
+let botsay = "검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명";
+
+var level;
+var jobGrowName;
+
+function basicCharaterSearch(name) {
     wordType = "match";
+    characterName = encodeURIComponent(name);
+    url = 'https://api.neople.co.kr/df/servers/' + serverName + '/characters?characterName=' + characterName + ' & wordType=' + wordType + ' & apikey=' + APIkey;
 
 }
+
+function setServer(server) {
+    switch (server) {
+        case "안톤":
+            serverName = "anton"
+            break;
+        case "바칼":
+            serverName = "bakal"
+            break;
+        case "카인":
+            serverName = "cain"
+            break;
+        case "카시야스":
+            serverName = "casillas"
+            break;
+        case "디레지에":
+            serverName = "diregie"
+            break;
+        case "힐더":
+            serverName = "hillder"
+            break;
+        case "프레이":
+            serverName = "prey"
+            break;
+        case "시로코":
+            serverName = "siroco"
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+
+
 
 app.get('/keyboard', function (req, res) {
     let keyboard = {
@@ -50,21 +87,26 @@ app.post('/message', function (req, res) {
     if (content.indexOf(",") != -1) {
         let findex = content.split(",");
 
-        if (findex[0] == 1) { }
-        else if (findex[0] == 2) { }
-        else if (findex[0] == 3) { }
+        if (findex[0] == 1) {
+            botsay = "캐릭터검색 호출"
+            setServer(findex[1]);
+            basicCharaterSearch(findex[2]);
+            request(url, function (error, res, json) {
+                if (error) { throw error }
+                console.log(json);
+            }
+            )
+        }
+        else if (findex[0] == 2) { botsay = "경매장검색 호출" }
+        else if (findex[0] == 3) { botsay = "아이템검색 호출" }
+        else { botsay = "검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명"; }
     }
-    let botsay = "검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명";
 
-    if ("캐릭터" == content) {
-        botsay = "1, [서버], [캐릭터명]";
-    } else if ("경매장" == content) {
-        botsay = "2, [아이템명]";
-    } else if ("아이템" == content) {
-        botsay = "3, [아이템명]";
-    } else {
 
-    }
+
+
+
+
     let answer = {
         "message": {
             "text": botsay
