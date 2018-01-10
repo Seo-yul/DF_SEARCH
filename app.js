@@ -94,18 +94,20 @@ app.post('/message', function (req, res) {
             basicCharaterSearch(findex[2]);
             request(url, function (error, res, json) {
 
-                objna = $.parseJSON(json)
-                characterId = objna.characterId;
+                var jsonData= JSON.parse(json)
+                 objna = jsonData.rows[0];
+                var characterName = decodeURIComponent(objna.characterName);
+                var level = objna.level;
+                var jobGrowName = objna.jobGrowName;
+
+            botsay = "ID: " + characterName + "\n Lv: " + level + "\n 직업: " + jobGrowName;
                 if (error) { throw error }
-                console.log(url);
-                console.log(json);
-                console.log(objna);
-                console.log(objna.characterName);
+
+
                 console.log(objna.level);
                 console.log(objna.jobGrowName);
             }
             )
-            botsay = "ID: " + objna.characterName + "\n Lv: " + objna.level + "\n 직업: " + objna.jobGrowName;
         }
         else if (findex[0] == 2) { botsay = "경매장검색 호출" }
         else if (findex[0] == 3) { botsay = "아이템검색 호출" }
