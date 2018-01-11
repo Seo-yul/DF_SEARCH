@@ -25,7 +25,6 @@ let objna;
 
 let botsay = '검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명';
 
-let flag = false;
 
 var level;
 var jobGrowName;
@@ -49,15 +48,15 @@ function basicCharaterSearch(name) {
             characterName = decodeURIComponent(objna.characterName);
             level = objna.level;
             jobGrowName = objna.jobGrowName;
-            if(level>85){
+            if (level > 85) {
                 console.log(objna);
                 botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
 
             } if (error) { throw error }
         }
         console.log(botsay);
-     flag=true;
-        return botsay;}
+        return botsay;
+    }
     );
 }
 
@@ -76,7 +75,7 @@ function infoCharaterSearch(name) {
         var jsonData = JSON.parse(json)
         //여기 돌려보고
     });
-flag=true;}
+}
 
 function setServer(server) {
     switch (server) {
@@ -109,10 +108,36 @@ app.get('/keyboard', function (req, res) {
 });
 
 app.post('/message', function (req, res) {
-    flag =false;
     let user_key = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
+
+    function sendMsg() {
+        let answer = {
+            'message': {
+                'text': botsay
+            }
+        }
+
+        res.send(answer);
+    }
+
+    function async1() {
+        setServer(findex[1]);
+        basicCharaterSearch(findex[2]);
+        return new Promise(function (resolve, reject) {
+            resolve(sendMsg());
+        });
+    }
+    function async2() {
+        setServer(findex[1]);
+        infoCharaterSearch(findex[2]);
+        return new Promise(function (resolve, reject) {
+            resolve(sendMsg());
+        });
+    }
+
+
     console.log(user_key);
     console.log(type);
     console.log(content);
@@ -121,25 +146,21 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            setServer(findex[1]);
-            basicCharaterSearch(findex[2]);
+            async1();
 
         }
         else if (findex[0] == 2) {
             // botsay = 캐릭터정보 호출'
-            setServer(findex[1]);
-            infoCharaterSearch(findex[2]);
+            async2();
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
-            flag = true;
-            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명'; }
-    }else{
- flag = true;
-            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명'; }
-
-
+            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
+        }
+    } else {
+        botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
+    }
 
     // {
     //     'rows':
@@ -155,21 +176,7 @@ app.post('/message', function (req, res) {
     //         }
     //     ]
     // }
-console.log(flag);
-    while(true){
-        if(flag){
-            break;
-        }
-        sleep(300);
-    }
-
-    let answer = {
-        'message': {
-            'text': botsay
-        }
-    }
-
-    res.send(answer);
+    //console.log(log);
 
 });
 
