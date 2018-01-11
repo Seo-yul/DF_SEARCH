@@ -20,7 +20,7 @@ let itemName //아이템 명칭(URL 인코딩 필요)
 let q; //검색 관련 요청 변수
 let auctionNo //경매장 등록 번호
 let url;
-
+let answer;
 let objna;
 
 let botsay = '검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명';
@@ -58,6 +58,7 @@ function basicCharaterSearch(name) {
         return botsay;
     }
     );
+    return botsay;
 }
 
 function infoCharaterSearch(name) {
@@ -112,10 +113,10 @@ app.post('/message', function (req, res) {
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
 
-    function setMsg() {
-        let answer = {
+    function setMsg(msg) {
+        answer = {
             'message': {
-                'text': botsay
+                'text': msg
             }
         }
     }
@@ -124,8 +125,8 @@ app.post('/message', function (req, res) {
         return new Promise(function (resolve, reject) {
             if (param) {
                 setServer(findex[1]);
-                basicCharaterSearch(findex[2]);
-                resolve(setMsg());
+
+                resolve(setMsg(basicCharaterSearch(findex[2])));
             }
             else {
                 reject(console.log("anync1"))
@@ -137,7 +138,7 @@ app.post('/message', function (req, res) {
             if (param) {
                 setServer(findex[1]);
                 infoCharaterSearch(findex[2]);
-                resolve(setMsg());
+                resolve(setMsg(botsay));
             }
             else {
                 reject(console.log("anync2"))
@@ -180,12 +181,12 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
             botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-            setMsg();
+            setMsg(botsay);
             res.send(answer);
         }
     } else {
         botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-        setMsg();
+        setMsg(botsay);
         res.send(answer);
     }
 
