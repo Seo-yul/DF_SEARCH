@@ -25,6 +25,8 @@ let objna;
 
 let botsay = '검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명';
 
+let flag = false;
+
 var level;
 var jobGrowName;
 
@@ -34,28 +36,29 @@ function sleep(ms) {
 }
 
 function basicCharaterSearch(name) {
-    wordType = 'front';
+    wordType = 'full';
     characterName = encodeURIComponent(name);
-    url = dnf + serverName + '/characters?characterName=' + characterName + '&wordType=' + wordType + '&apikey=' + APIkey;
+    url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
 
     request(url, function (error, res, json) {
 
         var jsonData = JSON.parse(json)
-        botsay = 'null';
+        botsay = '';
         for (key in jsonData.rows) {
-            objna = key;
-            var characterName = decodeURIComponent(objna.characterName);
-            var level = objna.level;
-            var jobGrowName = objna.jobGrowName;
+            objna = jsonData.rows[key];
+            characterName = decodeURIComponent(objna.characterName);
+            level = objna.level;
+            jobGrowName = objna.jobGrowName;
+            if(level>85){
+                console.log(objna);
+                botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
 
-            botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
-            if (error) { throw error }
+            } if (error) { throw error }
         }
-        //console.log(objna.level);
-        //console.log(objna.jobGrowName);
-    }
+        console.log(botsay);
+     flag=true;
+        return botsay;}
     );
-    sleep(3 * 1000);
 }
 
 function infoCharaterSearch(name) {
@@ -67,15 +70,13 @@ function infoCharaterSearch(name) {
         var jsonData = JSON.parse(json)
         characterId = jsonData.rows.characterId;
     });
-    sleep(3 * 1000);
     url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
     request(url, function (error, res, json) {
 
         var jsonData = JSON.parse(json)
         //여기 돌려보고
     });
-
-}
+flag=true;}
 
 function setServer(server) {
     switch (server) {
@@ -108,6 +109,7 @@ app.get('/keyboard', function (req, res) {
 });
 
 app.post('/message', function (req, res) {
+    flag =false;
     let user_key = decodeURIComponent(req.body.user_key); // user's key
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
@@ -130,8 +132,13 @@ app.post('/message', function (req, res) {
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
-        else { botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명'; }
-    }
+        else {
+            flag = true;
+            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명'; }
+    }else{
+ flag = true;
+            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명'; }
+
 
 
     // {
@@ -148,8 +155,13 @@ app.post('/message', function (req, res) {
     //         }
     //     ]
     // }
-
-
+console.log(flag);
+    while(true){
+        if(flag){
+            break;
+        }
+        sleep(300);
+    }
 
     let answer = {
         'message': {
