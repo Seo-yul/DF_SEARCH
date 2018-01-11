@@ -2,10 +2,11 @@ var express = require('express');
 var app = express();
 var request = require('request')
 var bodyParser = require('body-parser');
+const appKeyValue = require('./mykey');
 
 app.use(bodyParser.json());
 
-let APIkey;
+let APIkey = appKeyValue.appkey();
 let dnf = 'https://api.neople.co.kr/df/servers/';
 let serverName; //서버영문명칭
 let characterId; //캐릭터 고유 코드
@@ -123,7 +124,7 @@ app.post('/message', function (req, res) {
 
         }
         else if (findex[0] == 2) {
-            // botsay = 캐릭터정보 호출' 
+            // botsay = 캐릭터정보 호출'
             setServer(findex[1]);
             infoCharaterSearch(findex[2]);
         }
