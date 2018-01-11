@@ -123,35 +123,31 @@ app.post('/message', function (req, res) {
     }
 
     function async1() {
-        setServer(findex[1]);
-        basicCharaterSearch(findex[2]);
         return new Promise(function (resolve, reject) {
-            resolve(sendMsg());
+            setServer(findex[1]);
+            basicCharaterSearch(findex[2]);
         });
     }
     function async2() {
-        setServer(findex[1]);
-        infoCharaterSearch(findex[2]);
+
         return new Promise(function (resolve, reject) {
-            resolve(sendMsg());
+            setServer(findex[1]);
+            infoCharaterSearch(findex[2]);
         });
     }
     function async3() {
-        //
         return new Promise(function (resolve, reject) {
-            resolve(sendMsg());
+            //
         });
     }
     function async4() {
-        //
         return new Promise(function (resolve, reject) {
-            resolve(sendMsg());
+            //
         });
     }
     function async5() {
-        //
         return new Promise(function (resolve, reject) {
-            resolve(sendMsg());
+            //
         });
     }
 
@@ -164,7 +160,7 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1();
+            async1().then(sendMsg());
 
         }
         else if (findex[0] == 2) {
