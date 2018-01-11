@@ -37,43 +37,44 @@ function sleep(ms) {
     ts1 = new Date().getTime() + ms;
     do ts2 = new Date().getTime(); while (ts2 < ts1);
 }
- function setMsg(msg) {
-        answer = {
-            'message': {
-                'text': msg
-            }
+function setMsg(msg) {
+    answer = {
+        'message': {
+            'text': msg
         }
     }
+}
 function basicCharaterSearch(name) {
-    return new Promise(function (resolve, reject){
-        if(name){
+    return new Promise(function (resolve, reject) {
+        if (name) {
 
-        wordType = 'full';
-        characterName = encodeURIComponent(name[2]);
-        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-//console.log(url);
-        request(url, function (error, res, json) {
+            wordType = 'full';
+            characterName = encodeURIComponent(name[2]);
+            url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
+            //console.log(url);
+            request(url, function (error, res, json) {
 
-            var jsonData = JSON.parse(json)
-            botsay = '';
-            for (key in jsonData.rows) {
-                objna = jsonData.rows[key];
-                characterName = decodeURIComponent(objna.characterName);
-                level = objna.level;
-                jobGrowName = objna.jobGrowName;
-                if (level = 90) {
-             //       console.log(objna);
-                    botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
+                var jsonData = JSON.parse(json)
+                botsay = '';
+                for (key in jsonData.rows) {
+                    objna = jsonData.rows[key];
+                    characterName = decodeURIComponent(objna.characterName);
+                    level = objna.level;
+                    jobGrowName = objna.jobGrowName;
+                    if (level = 90) {
+                        //       console.log(objna);
+                        botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
 
-                } if (error) { throw error }
+                    } if (error) { throw error }
+                }
+                // console.log(botsay);
+                setMsg(botsay);
+
             }
-        // console.log(botsay);
-        return botsay;
-        }
-        );
-        setMsg(botsay);
-        resolve('ok');
-        }else{
+            );
+
+            resolve('ok');
+        } else {
             reject(console.log('캐릭터검색'));
         }
     });
@@ -88,24 +89,24 @@ function infoCharaterSearch(name) {
     request(url, function (error, res, json) {
 
         var jsonData = JSON.parse(json);
-       characterId = jsonData.rows[0].characterId;
+        characterId = jsonData.rows[0].characterId;
         //console.log(characterId);
 
-    url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
-    request(url, function (error, res, json) {
-        //console.log(url);
-        var jsonData = JSON.parse(json);
-       // console.log(jsonData);
-        characterName = jsonData.characterName;
-        level = jsonData.level;
-        jobName = jsonData.jobName;
-        adventureName = jsonData.adventureName;
-        guildName = jsonData.guildName;
-        botsay = '닉네임: '+ characterName +'\nLv: '+ level+'\n직업: '+jobName+'\n모험단: '+adventureName+'\n길드명: '+guildName;
-console.log(botsay);
-        setMsg(botsay);
+        url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
+        request(url, function (error, res, json) {
+            //console.log(url);
+            var jsonData = JSON.parse(json);
+            // console.log(jsonData);
+            characterName = jsonData.characterName;
+            level = jsonData.level;
+            jobName = jsonData.jobName;
+            adventureName = jsonData.adventureName;
+            guildName = jsonData.guildName;
+            botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
+            console.log(botsay);
+            setMsg(botsay);
 
-    });
+        });
 
 
     });
@@ -161,16 +162,7 @@ app.post('/message', function (req, res) {
         return new Promise(function (resolve, reject) {
         });
     }
-    function async3() {
-        return new Promise(function (resolve, reject) {
-            //
-        });
-    }
-    function async4() {
-        return new Promise(function (resolve, reject) {
-            //
-        });
-    }
+
 
     console.log(user_key);
     console.log(type);
@@ -180,25 +172,27 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1(findex).then(basicCharaterSearch(findex)).then(setMsg(botsay)).then(res.send(answer));
-console.log('호출끝난부분');
-           // console.log(answer);
+            async1(findex).then(basicCharaterSearch(findex));
+            console.log('호출끝난부분');
+            // console.log(answer);
+
         }
         else if (findex[0] == 2) {
             // botsay = 캐릭터정보 호출'
-       infoCharaterSearch (findex);
+            infoCharaterSearch(findex);
+
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
             botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
             setMsg(botsay);
-            res.send(answer);
+
         }
     } else {
         botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
         setMsg(botsay);
-        res.send(answer);
+
     }
 
     // {
@@ -215,8 +209,9 @@ console.log('호출끝난부분');
     //         }
     //     ]
     // }
-    //console.log(log);
-
+    console.log('answer마지막부분');
+    console.log(answer);
+    res.send(answer);
 });
 
 app.listen(3000, function () {
