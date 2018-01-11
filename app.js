@@ -19,6 +19,10 @@ let itemId; //아이템 고유 코드
 let itemName //아이템 명칭(URL 인코딩 필요)
 let q; //검색 관련 요청 변수
 let auctionNo //경매장 등록 번호
+let adventureName; //모험단명
+let guildName; //길드명
+
+
 let url;
 let answer;
 let objna;
@@ -33,50 +37,79 @@ function sleep(ms) {
     ts1 = new Date().getTime() + ms;
     do ts2 = new Date().getTime(); while (ts2 < ts1);
 }
-
-function basicCharaterSearch(name) {
-    wordType = 'full';
-    characterName = encodeURIComponent(name);
-    url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-
-    request(url, function (error, res, json) {
-
-        var jsonData = JSON.parse(json)
-        botsay = '';
-        for (key in jsonData.rows) {
-            objna = jsonData.rows[key];
-            characterName = decodeURIComponent(objna.characterName);
-            level = objna.level;
-            jobGrowName = objna.jobGrowName;
-            if (level > 85) {
-                console.log(objna);
-                botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
-
-            } if (error) { throw error }
+ function setMsg(msg) {
+        answer = {
+            'message': {
+                'text': msg
+            }
         }
-        console.log(botsay);
-        flag = true;
-        return botsay;
     }
-    );
-    return botsay;
+function basicCharaterSearch(name) {
+    return new Promise(function (resolve, reject){
+        if(name){
+
+        wordType = 'full';
+        characterName = encodeURIComponent(name[2]);
+        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
+//console.log(url);
+        request(url, function (error, res, json) {
+
+            var jsonData = JSON.parse(json)
+            botsay = '';
+            for (key in jsonData.rows) {
+                objna = jsonData.rows[key];
+                characterName = decodeURIComponent(objna.characterName);
+                level = objna.level;
+                jobGrowName = objna.jobGrowName;
+                if (level = 90) {
+             //       console.log(objna);
+                    botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
+
+                } if (error) { throw error }
+            }
+        // console.log(botsay);
+        return botsay;
+        }
+        );
+        setMsg(botsay);
+        resolve('ok');
+        }else{
+            reject(console.log('캐릭터검색'));
+        }
+    });
 }
 
 function infoCharaterSearch(name) {
     wordType = 'match';
-    characterName = encodeURIComponent(name);
-    url = dnf + serverName + '/characters?characterName=' + characterName + '&wordType=' + wordType + '&apikey=' + APIkey;
+    characterName = encodeURIComponent(name[2]);
+    setServer(name[1]);
+    var characterId;
+    url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
     request(url, function (error, res, json) {
 
-        var jsonData = JSON.parse(json)
-        characterId = jsonData.rows.characterId;
-    });
+        var jsonData = JSON.parse(json);
+       characterId = jsonData.rows[0].characterId;
+        //console.log(characterId);
+
     url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
     request(url, function (error, res, json) {
+        //console.log(url);
+        var jsonData = JSON.parse(json);
+       // console.log(jsonData);
+        characterName = jsonData.characterName;
+        level = jsonData.level;
+        jobName = jsonData.jobName;
+        adventureName = jsonData.adventureName;
+        guildName = jsonData.guildName;
+        botsay = '닉네임: '+ characterName +'\nLv: '+ level+'\n직업: '+jobName+'\n모험단: '+adventureName+'\n길드명: '+guildName;
+console.log(botsay);
+        setMsg(botsay);
 
-        var jsonData = JSON.parse(json)
-        //여기 돌려보고
     });
+
+
+    });
+
 }
 
 function setServer(server) {
@@ -98,18 +131,6 @@ function setServer(server) {
     }
 }
 
-function waitTime(param) {
-    return new Promise(function (resolve, reject) {
-        while (true) {
-            sleep(100);
-            if (flag)
-                break;
-        }
-        resolve('go');
-    });
-}
-
-
 app.get('/keyboard', function (req, res) {
     let keyboard = {
         'type': 'text'
@@ -122,13 +143,7 @@ app.post('/message', function (req, res) {
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
 
-    function setMsg(msg) {
-        answer = {
-            'message': {
-                'text': msg
-            }
-        }
-    }
+
 
     function async1(param) {
         return new Promise(function (resolve, reject) {
@@ -144,15 +159,6 @@ app.post('/message', function (req, res) {
     }
     function async2(param) {
         return new Promise(function (resolve, reject) {
-            if (param) {
-                setServer(param[1]);
-                infoCharaterSearch(param[2]);
-                setMsg(botsay)
-                resolve('ok');
-            }
-            else {
-                reject(console.log("anync2"))
-            }
         });
     }
     function async3() {
@@ -165,12 +171,6 @@ app.post('/message', function (req, res) {
             //
         });
     }
-    function async5() {
-        return new Promise(function (resolve, reject) {
-            //
-        });
-    }
-
 
     console.log(user_key);
     console.log(type);
@@ -180,12 +180,13 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1(findex).then(waitTime).then(res.send(answer));
-
+            async1(findex).then(basicCharaterSearch(findex)).then(setMsg(botsay)).then(res.send(answer));
+console.log('호출끝난부분');
+           // console.log(answer);
         }
         else if (findex[0] == 2) {
             // botsay = 캐릭터정보 호출'
-            async2(findex).then(res.send(answer));
+       infoCharaterSearch (findex);
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
