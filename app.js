@@ -112,27 +112,36 @@ app.post('/message', function (req, res) {
     let type = decodeURIComponent(req.body.type); // message type
     let content = decodeURIComponent(req.body.content); // user's message
 
-    function sendMsg() {
+    function setMsg() {
         let answer = {
             'message': {
                 'text': botsay
             }
         }
-
-        res.send(answer);
     }
 
-    function async1() {
+    function async1(param) {
         return new Promise(function (resolve, reject) {
-            setServer(findex[1]);
-            basicCharaterSearch(findex[2]);
+            if (param) {
+                setServer(findex[1]);
+                basicCharaterSearch(findex[2]);
+                resolve(setMsg());
+            }
+            else {
+                reject(console.log("anync1"))
+            }
         });
     }
-    function async2() {
-
+    function async2(param) {
         return new Promise(function (resolve, reject) {
-            setServer(findex[1]);
-            infoCharaterSearch(findex[2]);
+            if (param) {
+                setServer(findex[1]);
+                infoCharaterSearch(findex[2]);
+                resolve(setMsg());
+            }
+            else {
+                reject(console.log("anync2"))
+            }
         });
     }
     function async3() {
@@ -160,22 +169,24 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1().then(sendMsg());
+            async1(findex[0]).then(res.send(answer));
 
         }
         else if (findex[0] == 2) {
             // botsay = 캐릭터정보 호출'
-            async2();
+            async2(findex[0]).then(res.send(answer));
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
             botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-            sendMsg();
+            setMsg();
+            res.send(answer);
         }
     } else {
         botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-        sendMsg();
+        setMsg();
+        res.send(answer);
     }
 
     // {
