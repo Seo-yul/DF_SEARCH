@@ -124,9 +124,9 @@ app.post('/message', function (req, res) {
     function async1(param) {
         return new Promise(function (resolve, reject) {
             if (param) {
-                setServer(findex[1]);
-
-                resolve(setMsg(basicCharaterSearch(findex[2])));
+                setServer(param[1]);
+                setMsg(basicCharaterSearch(param[2]))
+                resolve('ok');
             }
             else {
                 reject(console.log("anync1"))
@@ -136,9 +136,10 @@ app.post('/message', function (req, res) {
     function async2(param) {
         return new Promise(function (resolve, reject) {
             if (param) {
-                setServer(findex[1]);
-                infoCharaterSearch(findex[2]);
-                resolve(setMsg(botsay));
+                setServer(param[1]);
+                infoCharaterSearch(param[2]);
+                setMsg(botsay)
+                resolve('ok');
             }
             else {
                 reject(console.log("anync2"))
@@ -170,12 +171,12 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1(findex[0]).then(res.send(answer));
+            async1(findex).then(res.send(answer));
 
         }
         else if (findex[0] == 2) {
             // botsay = 캐릭터정보 호출'
-            async2(findex[0]).then(res.send(answer));
+            async2(findex).then(res.send(answer));
         }
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
