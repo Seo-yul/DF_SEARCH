@@ -136,6 +136,24 @@ app.post('/message', function (req, res) {
             resolve(sendMsg());
         });
     }
+    function async3() {
+        //
+        return new Promise(function (resolve, reject) {
+            resolve(sendMsg());
+        });
+    }
+    function async4() {
+        //
+        return new Promise(function (resolve, reject) {
+            resolve(sendMsg());
+        });
+    }
+    function async5() {
+        //
+        return new Promise(function (resolve, reject) {
+            resolve(sendMsg());
+        });
+    }
 
 
     console.log(user_key);
@@ -157,9 +175,11 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
             botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
+            sendMsg();
         }
     } else {
         botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
+        sendMsg();
     }
 
     // {
