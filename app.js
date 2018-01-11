@@ -44,43 +44,30 @@ function setMsg(msg) {
         }
     }
 }
-function basicCharaterSearch(name) {
-    return new Promise(function (resolve, reject) {
-        if (name) {
+function basicCharaterSearch(name) { //캐릭터검색
+    wordType = 'full';
+    characterName = encodeURIComponent(name[2]);
+    url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
+    request(url, function (error, res, json) {
 
-            wordType = 'full';
-            characterName = encodeURIComponent(name[2]);
-            url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-            //console.log(url);
-            request(url, function (error, res, json) {
+        var jsonData = JSON.parse(json)
+        botsay = '';
+        for (key in jsonData.rows) {
+            objna = jsonData.rows[key];
+            characterName = decodeURIComponent(objna.characterName);
+            level = objna.level;
+            jobGrowName = objna.jobGrowName;
+            if (level = 90) {
+                botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
 
-                var jsonData = JSON.parse(json)
-                botsay = '';
-                for (key in jsonData.rows) {
-                    objna = jsonData.rows[key];
-                    characterName = decodeURIComponent(objna.characterName);
-                    level = objna.level;
-                    jobGrowName = objna.jobGrowName;
-                    if (level = 90) {
-                        //       console.log(objna);
-                        botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
-
-                    } if (error) { throw error }
-                }
-                // console.log(botsay);
-                setMsg(botsay);
-
-            }
-            );
-
-            resolve('ok');
-        } else {
-            reject(console.log('캐릭터검색'));
+            } if (error) { throw error }
         }
-    });
+        setMsg(botsay);
+    }
+    );
 }
 
-function infoCharaterSearch(name) {
+function infoCharaterSearch(name) { //캐릭터정보검색
     wordType = 'match';
     characterName = encodeURIComponent(name[2]);
     setServer(name[1]);
@@ -90,13 +77,10 @@ function infoCharaterSearch(name) {
 
         var jsonData = JSON.parse(json);
         characterId = jsonData.rows[0].characterId;
-        //console.log(characterId);
 
         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
         request(url, function (error, res, json) {
-            //console.log(url);
             var jsonData = JSON.parse(json);
-            // console.log(jsonData);
             characterName = jsonData.characterName;
             level = jsonData.level;
             jobName = jsonData.jobName;
@@ -172,7 +156,7 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1(findex).then(basicCharaterSearch(findex));
+            async1(findex);
             console.log('호출끝난부분');
             // console.log(answer);
 
