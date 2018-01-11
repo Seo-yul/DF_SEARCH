@@ -25,7 +25,7 @@ let objna;
 
 let botsay = '검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명';
 
-
+var flag;
 var level;
 var jobGrowName;
 
@@ -55,6 +55,7 @@ function basicCharaterSearch(name) {
             } if (error) { throw error }
         }
         console.log(botsay);
+        flag = true;
         return botsay;
     }
     );
@@ -97,8 +98,16 @@ function setServer(server) {
     }
 }
 
-
-
+function waitTime(param) {
+    return new Promise(function (resolve, reject) {
+        while (true) {
+            sleep(100);
+            if (flag)
+                break;
+        }
+        resolve('go');
+    });
+}
 
 
 app.get('/keyboard', function (req, res) {
@@ -171,7 +180,7 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
-            async1(findex).then(res.send(answer));
+            async1(findex).then(waitTime).then(res.send(answer));
 
         }
         else if (findex[0] == 2) {
