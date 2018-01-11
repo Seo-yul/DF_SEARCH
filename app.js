@@ -6,28 +6,28 @@ const appKeyValue = require('./mykey');
 
 app.use(bodyParser.json());
 
-let APIkey = appKeyValue.appkey();
-let dnf = 'https://api.neople.co.kr/df/servers/';
-let serverName; //서버영문명칭
-let characterId; //캐릭터 고유 코드
-let characterName; //캐릭터 명칭(URL 인코딩필요)
-let wordType; //검색타입 동일 단어(match), 앞 단어 검색(front), 전문 검색(full)
-let limit; //반환 Row 수
-let sort; //가격별 정렬
+var APIkey = appKeyValue.appkey();
+var dnf = 'https://api.neople.co.kr/df/servers/';
+var serverName; //서버영문명칭
+var characterId; //캐릭터 고유 코드
+var characterName; //캐릭터 명칭(URL 인코딩필요)
+var wordType; //검색타입 동일 단어(match), 앞 단어 검색(front), 전문 검색(full)
+var limit; //반환 Row 수
+var sort; //가격별 정렬
 
-let itemId; //아이템 고유 코드
-let itemName //아이템 명칭(URL 인코딩 필요)
-let q; //검색 관련 요청 변수
-let auctionNo //경매장 등록 번호
-let adventureName; //모험단명
-let guildName; //길드명
+var itemId; //아이템 고유 코드
+var itemName; //아이템 명칭(URL 인코딩 필요)
+var q; //검색 관련 요청 변수
+var auctionNo; //경매장 등록 번호
+var adventureName; //모험단명
+var guildName; //길드명
 
+var jsonData;
+var url;
+var answer;
+var objna;
 
-let url;
-let answer;
-let objna;
-
-let botsay = '검색기 사용법 \n [캐릭터] : 1, 서버명, 캐릭터명 \n [경매장] : 2, 아이템명 \n [아이템] : 3, 아이템명';
+var botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
 
 var flag;
 var level;
@@ -37,6 +37,7 @@ function sleep(ms) {
     ts1 = new Date().getTime() + ms;
     do ts2 = new Date().getTime(); while (ts2 < ts1);
 }
+
 function setMsg(msg) {
     answer = {
         'message': {
@@ -50,8 +51,7 @@ function basicCharaterSearch(name) { //캐릭터검색
     url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
     request(url, function (error, res, json) {
 
-        var jsonData = JSON.parse(json)
-        botsay = '';
+        jsonData = JSON.parse(json)
         for (key in jsonData.rows) {
             objna = jsonData.rows[key];
             characterName = decodeURIComponent(objna.characterName);
@@ -62,7 +62,6 @@ function basicCharaterSearch(name) { //캐릭터검색
 
             } if (error) { throw error }
         }
-        setMsg(botsay);
     }
     );
 }
@@ -75,12 +74,12 @@ function infoCharaterSearch(name) { //캐릭터정보검색
     url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
     request(url, function (error, res, json) {
 
-        var jsonData = JSON.parse(json);
+        jsonData = JSON.parse(json);
         characterId = jsonData.rows[0].characterId;
 
         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
         request(url, function (error, res, json) {
-            var jsonData = JSON.parse(json);
+            jsonData = JSON.parse(json);
             characterName = jsonData.characterName;
             level = jsonData.level;
             jobName = jsonData.jobName;
@@ -88,11 +87,7 @@ function infoCharaterSearch(name) { //캐릭터정보검색
             guildName = jsonData.guildName;
             botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
             console.log(botsay);
-            setMsg(botsay);
-
         });
-
-
     });
 
 }
@@ -117,24 +112,22 @@ function setServer(server) {
 }
 
 app.get('/keyboard', function (req, res) {
-    let keyboard = {
+    var keyboard = {
         'type': 'text'
     };
     res.send(keyboard);
 });
 
 app.post('/message', function (req, res) {
-    let user_key = decodeURIComponent(req.body.user_key); // user's key
-    let type = decodeURIComponent(req.body.type); // message type
-    let content = decodeURIComponent(req.body.content); // user's message
-
-
+    var user_key = decodeURIComponent(req.body.user_key); // user's key
+    var type = decodeURIComponent(req.body.type); // message type
+    var content = decodeURIComponent(req.body.content); // user's message
 
     function async1(param) {
         return new Promise(function (resolve, reject) {
             if (param) {
                 setServer(param[1]);
-                setMsg(basicCharaterSearch(param[2]))
+                basicCharaterSearch(param[2]);
                 resolve('ok');
             }
             else {
@@ -147,12 +140,11 @@ app.post('/message', function (req, res) {
         });
     }
 
-
     console.log(user_key);
     console.log(type);
     console.log(content);
     if (content.indexOf(',') != -1) {
-        let findex = content.split(',');
+        var findex = content.split(',');
 
         if (findex[0] == 1) {
             //botsay = '캐릭터검색 호출'
@@ -169,30 +161,17 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 3) { botsay = '경매장검색 호출' }
         else if (findex[0] == 4) { botsay = '아이템검색 호출' }
         else {
-            botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-            setMsg(botsay);
+            botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
 
         }
-    } else {
-        botsay = '검색기 사용법 \n [닉네임검색] : 1, 서버, 캐릭터\n [캐릭터정보] : 2, 서버, 캐릭터 \n [경매장] : 3, 아이템명 \n [아이템] : 4, 아이템명';
-        setMsg(botsay);
-
+    } else if (content == '헬') {
+        botsay = '영곶해제 기원';
+    }
+    else {
+        botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
     }
 
-    // {
-    //     'rows':
-    //     [
-    //         {
-    //             'characterId': 'e88bfdbf0567b737d4a8970a42ca37b0',
-    //             'characterName': '하얀우산',
-    //             'level': 90,
-    //             'jobId': '41f1cdc2ff58bb5fdc287be0db2a8df3',
-    //             'jobGrowId': '80ec67d0356defa46a989914caca5820',
-    //             'jobName': '귀검사(남)',
-    //             'jobGrowName': '검신'
-    //         }
-    //     ]
-    // }
+    setMsg(botsay);
     console.log('answer마지막부분');
     console.log(answer);
     res.send(answer);
