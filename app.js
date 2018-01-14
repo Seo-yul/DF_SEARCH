@@ -34,10 +34,6 @@ var flag;
 var level;
 var jobGrowName;
 
-// wait ms milliseconds
-function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
-}
 
 function setServer(server) {
     var engServer;
@@ -96,7 +92,7 @@ app.post('/message', function (req, res) {
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
         request.post(url, function (error, res, json) {
 
-            if (!error && response.statusCode == 200) {
+            if (!error && res.statusCode == 200) {
                 jsonData = JSON.parse(json)
                 for (key in jsonData.rows) {
                     objna = jsonData.rows[key];
