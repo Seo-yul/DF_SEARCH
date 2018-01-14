@@ -168,6 +168,7 @@ app.post('/message', function (req, res) {
             if (!error) {
                 jsonData = JSON.parse(body);
                 characterId = jsonData.rows[0].characterId;
+                console.log(characterId);
             }
             else {
                 setErrorTalk();
@@ -177,6 +178,7 @@ app.post('/message', function (req, res) {
         );
 
         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
+        console.log(url);
         request.get(url, function (error, res, body) {
 
             if (!error) {
@@ -235,7 +237,7 @@ app.post('/message', function (req, res) {
         var tempS = epicbeam(helser);
         var tempCH = epicbeam2(tempS);
 
-        botsay = topMsg + '\n\t\t\t\t\t\t' + tempS + '\n\t\t\t\t\t\t\t\t\t\t' + tempCH + ' Ch\n' + topMsg;
+        botsay = topMsg + '\n\t\t\t\t\t\t\t\t\t' + tempS + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + tempCH + ' Ch\n' + topMsg;
         lastCall();
     }
     else {
