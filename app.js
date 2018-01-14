@@ -34,8 +34,44 @@ var flag;
 var level;
 var jobGrowName;
 
+var helser = ['그란플로리스', '하늘성', '베히모스', '알프라이라', '노이어페라', '설산', '노스마이어', '아브노바', '멜트다운', '역천의 폭포', '안트베르 협곡', '해상열차', '시간의 문', '파워 스테이션', '노블스카이', '죽은자의 성', '메트로센터', '망자의 협곡', '이계 던전', '고대 던전', '마수 던전'];
+
 function setBasicTalk() {
     botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
+}
+function setErrorTalk() {
+    botsay = '관리자에게 현재 화면을 보내주시면 감사하겠습니다!\nhcom0103@gmail.com';
+}
+
+function epicbeam(a) {
+    return a[Math.floor(Math.random() * a.length)];
+}
+
+function epicbeam2(epicCH) {
+    var x;
+    switch (epicCH) {
+        case '그란플로리스': x = Math.floor((Math.random() * 15) + 1); break;
+        case '베히모스': x = Math.floor((Math.random() * 10) + 11); break;
+        case '알프라이라': x = Math.floor((Math.random() * 5) + 1); break;
+        case '노이어페라': x = Math.floor((Math.random() * 5) + 6); break;
+        case '설산': x = Math.floor((Math.random() * 5) + 11); break;
+        case '노스마이어': x = Math.floor((Math.random() * 5) + 16); break;
+        case '아브노바': x = Math.floor((Math.random() * 5) + 16); break;
+        case '역천의 폭포': x = Math.floor((Math.random() * 5) + 16); break;
+        case '시간의 문': x = Math.floor((Math.random() * 10) + 11); break;
+        case '파워 스테이션': x = Math.floor((Math.random() * 5) + 21); break;
+        case '죽은자의 성': x = Math.floor((Math.random() * 5) + 11); break;
+        case '메트로센터': x = Math.floor((Math.random() * 15) + 30); break;
+        case '망자의 협곡': x = Math.floor((Math.random() * 5) + 21); break;
+        case '고대 던전': x = Math.floor((Math.random() * 5) + 21); break;
+        case '마수 던전': x = Math.floor((Math.random() * 20) + 30); break;
+
+        default:
+            x = Math.floor((Math.random() * 10) + 1); break;
+            break;
+    }
+
+    return x;
 }
 
 function setServer(server) {
@@ -98,8 +134,6 @@ app.post('/message', function (req, res) {
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
         request.get(url, function (error, res, body) {
 
-           // console.log('body= '+body);
-
             if (!error) {
                 jsonData = JSON.parse(body)
                 //console.log('jsonData= ' + jsonData);
@@ -117,7 +151,7 @@ app.post('/message', function (req, res) {
                 lastCall();
             }
             else {
-                botsay = '관리자에게 현재 화면을 보내주세요!';
+                setErrorTalk();
                 lastCall();
             }
         }
@@ -125,30 +159,44 @@ app.post('/message', function (req, res) {
     }
 
 
-    // function infoCharaterSearch(name) { //캐릭터정보검색
-    //     wordType = 'match';
+    function infoCharaterSearch(name) { //캐릭터정보검색
+        wordType = 'match';
+        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
 
+        request.get(url, function (error, res, body) {
 
-    //     url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
-    //     request(url, function (error, res, json) {
+            if (!error) {
+                jsonData = JSON.parse(json);
+                characterId = jsonData.rows[0].characterId;
+            }
+            else {
+                setErrorTalk();
+                lastCall();
+            }
+        }
+        );
 
-    //         jsonData = JSON.parse(json);
-    //         characterId = jsonData.rows[0].characterId;
+        url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
+        request.get(url, function (error, res, body) {
 
-    //         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
-    //         request(url, function (error, res, json) {
-    //             jsonData = JSON.parse(json);
-    //             characterName = jsonData.characterName;
-    //             level = jsonData.level;
-    //             jobName = jsonData.jobName;
-    //             adventureName = jsonData.adventureName;
-    //             guildName = jsonData.guildName;
-    //             botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
-    //             console.log(botsay);
-    //         });
-    //     });
-
-    // }
+            if (!error) {
+                jsonData = JSON.parse(json);
+                characterName = jsonData.characterName;
+                level = jsonData.level;
+                jobName = jsonData.jobName;
+                adventureName = jsonData.adventureName;
+                guildName = jsonData.guildName;
+                botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
+                console.log(botsay);
+                lastCall();
+            }
+            else {
+                setErrorTalk();
+                lastCall();
+            }
+        }
+        );
+    }
 
 
 
@@ -183,7 +231,11 @@ app.post('/message', function (req, res) {
             lastCall();
         }
     } else if (content == '헬' || content == 'ㅎ') {
-        botsay = '영곶해제 기원';
+        var topMsg = '[ ★☆★☆ 에픽 등장 ☆★☆★ ]\n';
+        var tempS = epicbeam(helser);
+        var tempCH = epicbeam2(tempS);
+
+        botsay = topMsg + tempS + '\n' + tempCH + '\n' + topMsg;
         lastCall();
     }
     else {
