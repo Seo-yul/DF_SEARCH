@@ -28,12 +28,15 @@ var url; //JSON 파싱 url
 var answer;
 var objna;
 
-var botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
+var botsay;
 
 var flag;
 var level;
 var jobGrowName;
 
+function setBasicTalk() {
+    botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
+}
 
 function setServer(server) {
     var engServer;
@@ -91,9 +94,10 @@ app.post('/message', function (req, res) {
         wordType = 'full';
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
         request.post(url, function (error, res, json) {
-
+            console.log('url= ' + url);
             if (!error && res.statusCode == 200) {
-                jsonData = JSON.parse(json)
+                jsonData = JSON.parse(res.json)
+                console.log('jsonData= ' + jsonData);
                 for (key in jsonData.rows) {
                     objna = jsonData.rows[key];
                     characterName = decodeURIComponent(objna.characterName);
@@ -169,7 +173,7 @@ app.post('/message', function (req, res) {
             afterCall();
         }
         else {
-            botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
+            setBasicTalk();
             lastCall();
         }
     } else if (content == '헬' || content == 'ㅎ') {
@@ -177,7 +181,7 @@ app.post('/message', function (req, res) {
         lastCall();
     }
     else {
-        botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
+        setBasicTalk();
         lastCall();
     }
 
