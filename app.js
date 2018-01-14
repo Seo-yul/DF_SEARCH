@@ -166,7 +166,7 @@ app.post('/message', function (req, res) {
         request.get(url, function (error, res, body) {
 
             if (!error) {
-                jsonData = JSON.parse(json);
+                jsonData = JSON.parse(body);
                 characterId = jsonData.rows[0].characterId;
             }
             else {
@@ -180,7 +180,7 @@ app.post('/message', function (req, res) {
         request.get(url, function (error, res, body) {
 
             if (!error) {
-                jsonData = JSON.parse(json);
+                jsonData = JSON.parse(body);
                 characterName = jsonData.characterName;
                 level = jsonData.level;
                 jobName = jsonData.jobName;
@@ -219,11 +219,11 @@ app.post('/message', function (req, res) {
 
         }
         else if (findex[0] == 3) {
-            botsay = '경매장검색 호출';
+            botsay = '경매장검색 호출 제작중 입니다.';
             afterCall();
         }
         else if (findex[0] == 4) {
-            botsay = '아이템검색 호출';
+            botsay = '아이템검색 호출 제작중 입니다.';
             afterCall();
         }
         else {
@@ -235,7 +235,7 @@ app.post('/message', function (req, res) {
         var tempS = epicbeam(helser);
         var tempCH = epicbeam2(tempS);
 
-        botsay = topMsg + '\n\t' + tempS + '\n\t' + tempCH + ' Ch\n' + topMsg;
+        botsay = topMsg + '\n\t\t\t\t\t\t' + tempS + '\n\t\t\t\t\t\t\t\t\t\t' + tempCH + ' Ch\n' + topMsg;
         lastCall();
     }
     else {
