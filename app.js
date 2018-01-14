@@ -93,10 +93,10 @@ app.post('/message', function (req, res) {
     function basicCharaterSearch() { //캐릭터검색
         wordType = 'full';
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-        request.post(url, function (error, res, json) {
+        request.post(url, function (error, res, body) {
             console.log('url= ' + url);
-            if (!error && res.statusCode == 200) {
-                jsonData = JSON.parse(res.json)
+            if (!error && res.StatusCode == 200) {
+                jsonData = JSON.parse(res.body)
                 console.log('jsonData= ' + jsonData);
                 for (key in jsonData.rows) {
                     objna = jsonData.rows[key];
@@ -108,6 +108,7 @@ app.post('/message', function (req, res) {
 
                     }
                 }
+                console.log('botsay= ' + botsay);
                 lastCall();
             }
             else {
