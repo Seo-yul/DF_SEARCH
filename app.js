@@ -4,14 +4,11 @@ var request = require('request')
 var bodyParser = require('body-parser');
 const appKeyValue = require('./mykey');
 
-var jquery = require('jquery');
-var $ = jquery.create();
-
-
 app.use(bodyParser.json());
 
 var APIkey = appKeyValue.appkey();
 var dnf = 'https://api.neople.co.kr/df/servers/';
+
 var serverName; //서버영문명칭
 var characterId; //캐릭터 고유 코드
 var characterName; //캐릭터 명칭(URL 인코딩필요)
@@ -26,8 +23,8 @@ var auctionNo; //경매장 등록 번호
 var adventureName; //모험단명
 var guildName; //길드명
 
-var jsonData;
-var url;
+var jsonData; //JSON 파싱받은 데이터
+var url; //JSON 파싱 url
 var answer;
 var objna;
 
@@ -37,9 +34,9 @@ var flag;
 var level;
 var jobGrowName;
 
-function sleep(ms) {
-    ts1 = new Date().getTime() + ms;
-    do ts2 = new Date().getTime(); while (ts2 < ts1);
+// wait ms milliseconds
+function wait(ms) {
+    return new Promise(r => setTimeout(r, ms));
 }
 
 function setServer(server) {
@@ -88,62 +85,18 @@ app.post('/message', function (req, res) {
         }
     }
 
-    ////////////////////////////////////////////
-    function dnfcall(callback) {
-        wordType = 'full';
-        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-
-        var temp = $.getJSON(url, args, function (data) {
-            //execute the callback, passing it the data
-            callback(data);
-        });
-    }
-
-    //when you call dnfcall, it get's back the result:
-    function dnfcallBefore() {
-
-        //get our JSON
-        dnfcall(function (data) {
-
-            //when we get our data, evaluate
-            if (data.rows != null) {
-
-                jsonData = data.rows;
-
-                for (key in jsonData) {
-                    objna = jsonData[key];
-                    characterName = decodeURIComponent(objna.characterName);
-                    level = objna.level;
-                    jobGrowName = objna.jobGrowName;
-                    if (level = 90) {
-                        botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
-                    }
-                }
-                check = true;
-                console.log(characterName);
-                afterCall();
-            } else {
-                jsonData = "NaN"
-            }
-        });
-        console.log('i am executed before anything else');
-    }
-
-    function afterCall() {
+    function lastCall() {
         setMsg(botsay);
         res.send(answer);
-        console.log('after end');
     }
-    //////////////////////////////////////////
 
 
-    /*
-        function basicCharaterSearch(name) { //캐릭터검색
-            wordType = 'full';
-            characterName = encodeURIComponent(name[2]);
-            url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-            request(url, function (error, res, json) {
-    
+    function basicCharaterSearch() { //캐릭터검색
+        wordType = 'full';
+        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
+        request.post(url, function (error, res, json) {
+
+            if (!error && response.statusCode == 200) {
                 jsonData = JSON.parse(json)
                 for (key in jsonData.rows) {
                     objna = jsonData.rows[key];
@@ -152,62 +105,44 @@ app.post('/message', function (req, res) {
                     jobGrowName = objna.jobGrowName;
                     if (level = 90) {
                         botsay = botsay + 'ID: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n';
-    
-                    } if (error) { throw error }
+
+                    }
                 }
-            }
-            );
-    
-            setMsg(botsay);
-            res.send(answer);
-        }*/
-    /*
-        function infoCharaterSearch(name) { //캐릭터정보검색
-            wordType = 'match';
-            characterName = encodeURIComponent(name[2]);
-            setServer(name[1]);
-            var characterId;
-            url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
-            request(url, function (error, res, json) {
-    
-                jsonData = JSON.parse(json);
-                characterId = jsonData.rows[0].characterId;
-    
-                url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
-                request(url, function (error, res, json) {
-                    jsonData = JSON.parse(json);
-                    characterName = jsonData.characterName;
-                    level = jsonData.level;
-                    jobName = jsonData.jobName;
-                    adventureName = jsonData.adventureName;
-                    guildName = jsonData.guildName;
-                    botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
-                    console.log(botsay);
-                });
-            });
-    
-        }
-
-
-
-    function async1(param) {
-        return new Promise(function (resolve, reject) {
-            if (param) {
-                serverName = setServer(param[1]);
-                // basicCharaterSearch(param[2]);
-                resolve('ok');
+                lastCall();
             }
             else {
-                reject(console.log("anync1"))
+                botsay = '관리자에게 현재 화면을 보내주세요!';
+                lastCall();
             }
-        });
+        }
+        );
     }
 
-*/
+
+    // function infoCharaterSearch(name) { //캐릭터정보검색
+    //     wordType = 'match';
 
 
+    //     url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
+    //     request(url, function (error, res, json) {
 
+    //         jsonData = JSON.parse(json);
+    //         characterId = jsonData.rows[0].characterId;
 
+    //         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
+    //         request(url, function (error, res, json) {
+    //             jsonData = JSON.parse(json);
+    //             characterName = jsonData.characterName;
+    //             level = jsonData.level;
+    //             jobName = jsonData.jobName;
+    //             adventureName = jsonData.adventureName;
+    //             guildName = jsonData.guildName;
+    //             botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
+    //             console.log(botsay);
+    //         });
+    //     });
+
+    // }
 
 
 
@@ -218,35 +153,40 @@ app.post('/message', function (req, res) {
             //botsay = '캐릭터검색 호출'
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
-            // async1(findex);
-            dnfcallBefore();
+            basicCharaterSearch();
             console.log('캐릭터검색 호출 끝');
-            // console.log(answer);
 
         }
         else if (findex[0] == 2) {
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
-            afterCall();
-            //infoCharaterSearch(findex);
+            lastCall();
+            console.log('캐릭터정보검색 호출 끝');
 
         }
-        else if (findex[0] == 3) { botsay = '경매장검색 호출'; afterCall(); }
-        else if (findex[0] == 4) { botsay = '아이템검색 호출'; afterCall(); }
-        else {
-            botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
+        else if (findex[0] == 3) {
+            botsay = '경매장검색 호출';
             afterCall();
         }
-    } else if (content == '헬') {
-        botsay = '영곶해제 기원'; afterCall();
+        else if (findex[0] == 4) {
+            botsay = '아이템검색 호출';
+            afterCall();
+        }
+        else {
+            botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
+            lastCall();
+        }
+    } else if (content == '헬' || content == 'ㅎ') {
+        botsay = '영곶해제 기원';
+        lastCall();
     }
     else {
         botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
-        afterCall();
+        lastCall();
     }
 
 
-    console.log('최종 answer: ' + answer.message);
+    console.log('최종 answer: ' + answer[0]);
 
 });
 
