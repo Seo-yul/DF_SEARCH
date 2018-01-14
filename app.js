@@ -4,14 +4,9 @@ var request = require('request')
 var bodyParser = require('body-parser');
 const appKeyValue = require('./mykey');
 
-require("jsdom").env("", function (err, window) {
-    if (err) {
-        console.error(err);
-        return;
-    }
+var jquery = require('jquery');
+var $ = jquery.create();
 
-    var $ = require("jquery")(window);
-});
 
 app.use(bodyParser.json());
 
