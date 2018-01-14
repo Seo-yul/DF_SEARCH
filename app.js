@@ -159,7 +159,7 @@ app.post('/message', function (req, res) {
     }
 
 
-    function infoCharaterSearch(name) { //캐릭터정보검색
+    function infoCharaterSearch() { //캐릭터정보검색
         wordType = 'match';
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
 
@@ -214,7 +214,7 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 2) {
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
-            lastCall();
+            infoCharaterSearch()
             console.log('캐릭터정보검색 호출 끝');
 
         }
@@ -231,11 +231,11 @@ app.post('/message', function (req, res) {
             lastCall();
         }
     } else if (content == '헬' || content == 'ㅎ') {
-        var topMsg = '[ ★☆★☆ 에픽 등장 ☆★☆★ ]\n';
+        var topMsg = '[ ★☆★☆ 에픽 등장 ☆★☆★ ]';
         var tempS = epicbeam(helser);
         var tempCH = epicbeam2(tempS);
 
-        botsay = topMsg + tempS + '\n' + tempCH + '\n' + topMsg;
+        botsay = topMsg + '\n\t' + tempS + '\n\t' + tempCH + ' Ch\n' + topMsg;
         lastCall();
     }
     else {
