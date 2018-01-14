@@ -4,6 +4,15 @@ var request = require('request')
 var bodyParser = require('body-parser');
 const appKeyValue = require('./mykey');
 
+require("jsdom").env("", function (err, window) {
+    if (err) {
+        console.error(err);
+        return;
+    }
+
+    var $ = require("jquery")(window);
+});
+
 app.use(bodyParser.json());
 
 var APIkey = appKeyValue.appkey();
@@ -242,7 +251,7 @@ app.post('/message', function (req, res) {
     }
 
 
-    console.log('최종 answer: ' + answer);
+    console.log('최종 answer: ' + answer.message);
 
 });
 
