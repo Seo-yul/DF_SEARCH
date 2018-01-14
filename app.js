@@ -68,6 +68,13 @@ app.get('/keyboard', function (req, res) {
 });
 
 app.post('/message', function (req, res) {
+    var user_key = decodeURIComponent(req.body.user_key); // user's key
+    var type = decodeURIComponent(req.body.type); // message type
+    var content = decodeURIComponent(req.body.content); // user's message
+
+    console.log(user_key);
+    console.log(type);
+    console.log(content);
 
     function setMsg(msg) {
         answer = {
@@ -117,6 +124,7 @@ app.post('/message', function (req, res) {
         });
         console.log('i am executed before anything else');
     }
+
     function afterCall() {
         setMsg(botsay);
         res.send(answer);
@@ -174,7 +182,7 @@ app.post('/message', function (req, res) {
                 });
             });
     
-        }*/
+        }
 
 
 
@@ -191,16 +199,10 @@ app.post('/message', function (req, res) {
         });
     }
 
+*/
 
 
 
-    var user_key = decodeURIComponent(req.body.user_key); // user's key
-    var type = decodeURIComponent(req.body.type); // message type
-    var content = decodeURIComponent(req.body.content); // user's message
-
-    console.log(user_key);
-    console.log(type);
-    console.log(content);
 
 
 
@@ -221,26 +223,26 @@ app.post('/message', function (req, res) {
         else if (findex[0] == 2) {
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
-
+            afterCall();
             //infoCharaterSearch(findex);
 
         }
-        else if (findex[0] == 3) { botsay = '경매장검색 호출' }
-        else if (findex[0] == 4) { botsay = '아이템검색 호출' }
+        else if (findex[0] == 3) { botsay = '경매장검색 호출'; afterCall(); }
+        else if (findex[0] == 4) { botsay = '아이템검색 호출'; afterCall(); }
         else {
             botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
-
+            afterCall();
         }
     } else if (content == '헬') {
-        botsay = '영곶해제 기원';
+        botsay = '영곶해제 기원'; afterCall();
     }
     else {
         botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n헬';
+        afterCall();
     }
 
 
-    console.log('answer마지막부분');
-    console.log(answer);
+    console.log('최종 answer: ' + answer);
 
 });
 
