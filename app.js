@@ -86,19 +86,24 @@ app.post('/message', function (req, res) {
 
     function lastCall() {
         setMsg(botsay);
-        res.send(answer);
+        res.set({
+            'content-type': 'application/json'
+        }).send(JSON.stringify(answer));
     }
 
 
     function basicCharaterSearch() { //캐릭터검색
         wordType = 'full';
+        botsay = '';
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
-        request.post(url, function (error, res, body) {
-            console.log('url= ' + url);
-            if (!error && res.StatusCode == 200) {
-                jsonData = JSON.parse(res.body)
-                console.log('jsonData= ' + jsonData);
-                for (key in jsonData.rows) {
+        request.get(url, function (error, res, body) {
+
+           // console.log('body= '+body);
+
+            if (!error) {
+                jsonData = JSON.parse(body)
+                //console.log('jsonData= ' + jsonData);
+                for (var key in jsonData.rows) {
                     objna = jsonData.rows[key];
                     characterName = decodeURIComponent(objna.characterName);
                     level = objna.level;
@@ -187,7 +192,7 @@ app.post('/message', function (req, res) {
     }
 
 
-    console.log('최종 answer: ' + answer[0]);
+    console.log('최종 answer: ' + answer);
 
 });
 
