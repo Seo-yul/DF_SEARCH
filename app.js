@@ -36,6 +36,8 @@ var jobGrowName;
 
 var helser = ['그란플로리스', '\t\t\t\t\t하늘성', '\t베히모스', '알프라이라', '노이어페라', '\t\t\t\t\t설산', '노스마이어', '\t\t아브노바', '\t\t멜트다운', '\t역천의 폭포', '\t안트베르 협곡', '\t\t\t해상열차', '\t\t시간의 문', '\t파워 스테이션', '\t노블스카이', '\t죽은자의 성', '\t메트로센터', '\t망자의 협곡', '\t\t이계 던전', '\t\t고대 던전', '\t\t마수 던전'];
 
+var gangsan = ['꽃돼지?', '누나 잘 계시니?', '근육 아니고 살', '누나 요즘 뭐 하시니?'];
+
 function setBasicTalk() {
     botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
 }
@@ -239,6 +241,9 @@ app.post('/message', function (req, res) {
         var tempCH = epicbeam2(tempS);
 
         botsay = topMsg + '\n\t\t\t\t\t\t\t\t\t' + tempS + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t' + tempCH + ' Ch\n' + topMsg;
+        lastCall();
+    } else if (content == '이강산' || content == '강산') {
+        botsay = epicbeam(gangsan);
         lastCall();
     }
     else {
