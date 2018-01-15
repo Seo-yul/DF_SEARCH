@@ -34,7 +34,7 @@ var flag;
 var level;
 var jobGrowName;
 
-var helser = ['그란플로리스', '\t\t\t\t\t하늘성', '\t베히모스', '알프라이라', '노이어페라', '\t\t\t\t\t설산', '노스마이어', '\t\t아브노바', '\t\t멜트다운', '\t역천의 폭포', '\t안트베르 협곡', '\t\t\t\t해상열차', '\t\t시간의 문', '\t파워 스테이션', '\t노블스카이', '\t죽은자의 성', '\t메트로센터', '\t망자의 협곡', '\t\t이계 던전', '\t\t고대 던전', '\t\t마수 던전'];
+var helser = ['그란플로리스', '\t\t\t\t\t하늘성', '\t베히모스', '알프라이라', '노이어페라', '\t\t\t\t\t설산', '노스마이어', '\t\t아브노바', '\t\t멜트다운', '\t역천의 폭포', '\t안트베르 협곡', '\t\t\t해상열차', '\t\t시간의 문', '\t파워 스테이션', '\t노블스카이', '\t죽은자의 성', '\t메트로센터', '\t망자의 협곡', '\t\t이계 던전', '\t\t고대 던전', '\t\t마수 던전'];
 
 function setBasicTalk() {
     botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
@@ -162,7 +162,7 @@ app.post('/message', function (req, res) {
     function infoCharaterSearch() { //캐릭터정보검색
         wordType = 'match';
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
-
+        console.log('url 1=' + url);
         request.get(url, function (error, res, body) {
 
             if (!error) {
@@ -178,7 +178,7 @@ app.post('/message', function (req, res) {
         );
 
         url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
-        console.log(url);
+        console.log('url 2=' + url);
         request.get(url, function (error, res, body) {
 
             if (!error) {
