@@ -201,6 +201,7 @@ app.post('/message', function (req, res) {
                 jobGrowName = jsonData.jobGrowName;
                 adventureName = jsonData.adventureName;
                 guildName = jsonData.guildName;
+                console.log(jsonData);
                 him = jsonData.status[2].value;
                 gy = jsonData.status[3].value;;
                 chae = jsonData.status[4].value;;
@@ -273,7 +274,7 @@ app.post('/message', function (req, res) {
     if (content.indexOf(',') != -1) {
         var findex = content.split(',');
 
-        if (findex[0] == 1) {//캐릭터검색 호출            
+        if (findex[0] == 1) {//캐릭터검색 호출
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
             basicCharaterSearch();
