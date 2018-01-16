@@ -182,6 +182,37 @@ app.post('/message', function (req, res) {
                 jsonData = JSON.parse(body);
                 characterId = jsonData.rows[0].characterId;
                 console.log(characterId);
+
+                url = dnf + serverName + '/characters/' + characterId + 'status?apikey=' + APIkey;
+                console.log('url 2=' + url);
+                request.get(url, function (error, res, body) {
+
+                    if (!error) {
+                        jsonData = JSON.parse(body);
+                        characterName = jsonData.characterName;
+                        level = jsonData.level;
+                        jobGrowName = jsonData.jobGrowName;
+                        adventureName = jsonData.adventureName;
+                        guildName = jsonData.guildName;
+                        console.log(jsonData);
+                        him = jsonData.status[2].value;
+                        gy = jsonData.status[3].value;;
+                        chae = jsonData.status[4].value;;
+                        jung = jsonData.status[5].value;;
+                        mul = jsonData.status[6].value;;
+                        ma = jsonData.status[7].value;;
+                        dok = jsonData.status[8].value;;
+
+                        botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공' + dok;
+                        console.log(botsay);
+                        lastCall();
+                    }
+                    else {
+                        setErrorTalk();
+                        lastCall();
+                    }
+                }
+                );
             }
             else {
                 setErrorTalk();
@@ -190,39 +221,7 @@ app.post('/message', function (req, res) {
         }
         );
 
-        url = dnf + serverName + '/characters/' + characterId + 'status?apikey=' + APIkey;
-        console.log('url 2=' + url);
-        request.get(url, function (error, res, body) {
 
-            if (!error) {
-                jsonData = JSON.parse(body);
-                characterName = jsonData.characterName;
-                level = jsonData.level;
-                jobGrowName = jsonData.jobGrowName;
-                adventureName = jsonData.adventureName;
-                guildName = jsonData.guildName;
-                console.log(jsonData);
-                him = jsonData.status[2].value;
-                gy = jsonData.status[3].value;;
-                chae = jsonData.status[4].value;;
-                jung = jsonData.status[5].value;;
-                mul = jsonData.status[6].value;;
-                ma = jsonData.status[7].value;;
-                dok = jsonData.status[8].value;;
-
-                botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공' + dok;
-                console.log(botsay);
-                lastCall();
-            }
-            else {
-                setErrorTalk();
-                lastCall();
-            }
-        }
-
-
-
-        );
     }
     function getEpicInfo() { //에픽획득 정보검색
         wordType = 'match';
@@ -234,32 +233,32 @@ app.post('/message', function (req, res) {
                 jsonData = JSON.parse(body);
                 characterId = jsonData.rows[0].characterId;
                 console.log(characterId);
-            }
-            else {
-                setErrorTalk();
-                lastCall();
-            }
-        }
-        );
 
-        url = dnf + serverName + '/characters/' + characterId + '/timeline?limit=1&code=505&?apikey=' + APIkey;
-        console.log('url 2=' + url);
-        request.get(url, function (error, res, body) {
+                url = dnf + serverName + '/characters/' + characterId + '/timeline?limit=1&code=505&?apikey=' + APIkey;
+                console.log('url 2=' + url);
+                request.get(url, function (error, res, body) {
 
-            if (!error) {
-                jsonData = JSON.parse(body);
-                characterName = jsonData.characterName;
-                level = jsonData.level;
-                jobGrowName = jsonData.jobGrowName;
-                getdate = jsonData.timeline.rows[0].date;
-                channelName = jsonData.timeline.rows[0].data.channelName;
-                channelNo = jsonData.timeline.rows[0].data.channelNo;
-                dungeonName = jsonData.timeline.rows[0].data.dungeonName;
-                itemName = jsonData.timeline.rows[0].data.itemName
+                    if (!error) {
+                        jsonData = JSON.parse(body);
+                        characterName = jsonData.characterName;
+                        level = jsonData.level;
+                        jobGrowName = jsonData.jobGrowName;
+                        getdate = jsonData.timeline.rows[0].date;
+                        channelName = jsonData.timeline.rows[0].data.channelName;
+                        channelNo = jsonData.timeline.rows[0].data.channelNo;
+                        dungeonName = jsonData.timeline.rows[0].data.dungeonName;
+                        itemName = jsonData.timeline.rows[0].data.itemName
 
-                botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n장소: ' + channelName + '\t' + channelNo + dungeonName + 'ch' + '\n아이템: ' + itemName;
-                console.log(botsay);
-                lastCall();
+                        botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n장소: ' + channelName + '\t' + channelNo + dungeonName + 'ch' + '\n아이템: ' + itemName;
+                        console.log(botsay);
+                        lastCall();
+                    }
+                    else {
+                        setErrorTalk();
+                        lastCall();
+                    }
+                }
+                );
             }
             else {
                 setErrorTalk();
