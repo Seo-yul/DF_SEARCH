@@ -22,6 +22,18 @@ var q; //검색 관련 요청 변수
 var auctionNo; //경매장 등록 번호
 var adventureName; //모험단명
 var guildName; //길드명
+var getdate; //에픽획득 날짜
+var channelName; //채널이름
+var channelNo; //채널번호
+var dungeonName; //던전이름
+
+var him; // 힘
+var gy; //지능
+var chae; //체력
+var jung; //정신력
+var mul; //물딜
+var ma; //마딜
+var dok; //독립공격
 
 var jsonData; //JSON 파싱받은 데이터
 var url; //JSON 파싱 url
@@ -36,10 +48,8 @@ var jobGrowName;
 
 var helser = ['그란플로리스', '\t\t\t\t\t하늘성', '\t베히모스', '알프라이라', '노이어페라', '\t\t\t\t\t설산', '노스마이어', '\t\t아브노바', '\t\t멜트다운', '\t역천의 폭포', '\t안트베르 협곡', '\t\t\t해상열차', '\t\t시간의 문', '\t파워 스테이션', '\t노블스카이', '\t죽은자의 성', '\t메트로센터', '\t망자의 협곡', '\t\t이계 던전', '\t\t고대 던전', '\t\t마수 던전'];
 
-var gangsan = ['꽃돼지?', '누나 잘 계시니?', '근육 아니고 살', '누나 요즘 뭐 하시니?'];
-
 function setBasicTalk() {
-    botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[경매장] : 3, 아이템명\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
+    botsay = '검색기 사용법\n[닉네임검색] : 1, 서버, 캐릭터\n[캐릭터정보] : 2, 서버, 캐릭터\n[에픽획득] : 3, 서버, 캐릭터\n[아이템] : 4, 아이템명\n[헬추천] : 헬orㅎ';
 }
 function setErrorTalk() {
     botsay = '관리자에게 현재 화면을 보내주시면 감사하겠습니다!\nhcom0103@gmail.com';
@@ -133,11 +143,12 @@ app.post('/message', function (req, res) {
     function basicCharaterSearch() { //캐릭터검색
         wordType = 'full';
         botsay = '';
-        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=200&wordType=' + wordType + '&apikey=' + APIkey;
+        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=50&wordType=' + wordType + '&apikey=' + APIkey;
         request.get(url, function (error, res, body) {
 
             if (!error) {
                 jsonData = JSON.parse(body)
+
                 //console.log('jsonData= ' + jsonData);
                 for (var key in jsonData.rows) {
                     objna = jsonData.rows[key];
@@ -179,7 +190,7 @@ app.post('/message', function (req, res) {
         }
         );
 
-        url = dnf + serverName + '/characters/' + characterId + '?apikey=' + APIkey;
+        url = dnf + serverName + '/characters/' + characterId + 'status?apikey=' + APIkey;
         console.log('url 2=' + url);
         request.get(url, function (error, res, body) {
 
@@ -187,11 +198,65 @@ app.post('/message', function (req, res) {
                 jsonData = JSON.parse(body);
                 characterName = jsonData.characterName;
                 level = jsonData.level;
-                jobName = jsonData.jobName;
+                jobGrowName = jsonData.jobGrowName;
                 adventureName = jsonData.adventureName;
                 guildName = jsonData.guildName;
+                him = jsonData.status[2].value;
+                gy = jsonData.status[3].value;;
+                chae = jsonData.status[4].value;;
+                jung = jsonData.status[5].value;;
+                mul = jsonData.status[6].value;;
+                ma = jsonData.status[7].value;;
+                dok = jsonData.status[8].value;;
 
-                botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobName + '\n모험단: ' + adventureName + '\n길드명: ' + guildName;
+                botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공' + dok;
+                console.log(botsay);
+                lastCall();
+            }
+            else {
+                setErrorTalk();
+                lastCall();
+            }
+        }
+
+
+
+        );
+    }
+    function getEpicInfo() { //에픽획득 정보검색
+        wordType = 'match';
+        url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=1&wordType=' + wordType + '&apikey=' + APIkey;
+        console.log('url 1=' + url);
+        request.get(url, function (error, res, body) {
+
+            if (!error) {
+                jsonData = JSON.parse(body);
+                characterId = jsonData.rows[0].characterId;
+                console.log(characterId);
+            }
+            else {
+                setErrorTalk();
+                lastCall();
+            }
+        }
+        );
+
+        url = dnf + serverName + '/characters/' + characterId + '/timeline?limit=1&code=505&?apikey=' + APIkey;
+        console.log('url 2=' + url);
+        request.get(url, function (error, res, body) {
+
+            if (!error) {
+                jsonData = JSON.parse(body);
+                characterName = jsonData.characterName;
+                level = jsonData.level;
+                jobGrowName = jsonData.jobGrowName;
+                getdate = jsonData.timeline.rows[0].date;
+                channelName = jsonData.timeline.rows[0].data.channelName;
+                channelNo = jsonData.timeline.rows[0].data.channelNo;
+                dungeonName = jsonData.timeline.rows[0].data.dungeonName;
+                itemName = jsonData.timeline.rows[0].data.itemName
+
+                botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n장소: ' + channelName + '\t' + channelNo + dungeonName + 'ch' + '\n아이템: ' + itemName;
                 console.log(botsay);
                 lastCall();
             }
@@ -208,27 +273,26 @@ app.post('/message', function (req, res) {
     if (content.indexOf(',') != -1) {
         var findex = content.split(',');
 
-        if (findex[0] == 1) {
-            //botsay = '캐릭터검색 호출'
+        if (findex[0] == 1) {//캐릭터검색 호출            
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
             basicCharaterSearch();
             console.log('캐릭터검색 호출 끝');
-
         }
-        else if (findex[0] == 2) {
+        else if (findex[0] == 2) {//캐릭터정보 호출
             serverName = setServer(findex[1]);
             characterName = encodeURIComponent(findex[2]);
             infoCharaterSearch()
             console.log('캐릭터정보검색 호출 끝');
-
         }
-        else if (findex[0] == 3) {
-            botsay = '경매장검색 호출 제작중 입니다.';
-            afterCall();
+        else if (findex[0] == 3) {//에픽획득정보 호출
+            serverName = setServer(findex[1]);
+            characterName = encodeURIComponent(findex[2]);
+            getEpicInfo()
+            console.log('에픽정보호출 끝');
         }
         else if (findex[0] == 4) {
-            botsay = '아이템검색 호출 제작중 입니다.';
+            botsay = '아이템검색 제작중 입니다.';
             afterCall();
         }
         else {
@@ -236,17 +300,19 @@ app.post('/message', function (req, res) {
             lastCall();
         }
     } else if (content == '헬' || content == 'ㅎ') {
-        var topMsg = '[ ★☆★☆ 에픽 등장 ☆★☆★ ]';
+        var topMsg = '[★☆★☆ 에픽 등장 ☆★☆★]';
         var tempS = epicbeam(helser);
         var tempCH = epicbeam2(tempS);
 
         botsay = topMsg + '\n\t\t\t\t\t\t\t\t\t' + tempS + '\n\t\t\t\t\t\t\t\t\t\t\t\t\t' + tempCH + ' Ch\n' + topMsg;
         lastCall();
-    } else if (content == '이강산' || content == '강산') {
-        botsay = epicbeam(gangsan);
+    } else if (content == '트와이스' || content == '트둥이') {
+        botsay = '트와이스 대박!';
         lastCall();
-    }
-    else {
+    } else if (content == '러블리즈' || content == '럽둥이') {
+        botsay = '러블리즈 대박!';
+        lastCall();
+    } else {
         setBasicTalk();
         lastCall();
     }
