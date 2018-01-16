@@ -183,7 +183,7 @@ app.post('/message', function (req, res) {
                 characterId = jsonData.rows[0].characterId;
                 console.log(characterId);
 
-                url = dnf + serverName + '/characters/' + characterId + 'status?apikey=' + APIkey;
+                url = dnf + serverName + '/characters/' + characterId + '/status?apikey=' + APIkey;
                 console.log('url 2=' + url);
                 request.get(url, function (error, res, body) {
 
@@ -203,7 +203,7 @@ app.post('/message', function (req, res) {
                         ma = jsonData.status[7].value;;
                         dok = jsonData.status[8].value;;
 
-                        botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공' + dok;
+                        botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공: ' + dok;
                         console.log(botsay);
                         lastCall();
                     }
@@ -234,7 +234,7 @@ app.post('/message', function (req, res) {
                 characterId = jsonData.rows[0].characterId;
                 console.log(characterId);
 
-                url = dnf + serverName + '/characters/' + characterId + '/timeline?limit=1&code=505&?apikey=' + APIkey;
+                url = dnf + serverName + '/characters/' + characterId + '/timeline?limit=1&code=505&apikey=' + APIkey;
                 console.log('url 2=' + url);
                 request.get(url, function (error, res, body) {
 
@@ -243,13 +243,16 @@ app.post('/message', function (req, res) {
                         characterName = jsonData.characterName;
                         level = jsonData.level;
                         jobGrowName = jsonData.jobGrowName;
-                        getdate = jsonData.timeline.rows[0].date;
-                        channelName = jsonData.timeline.rows[0].data.channelName;
-                        channelNo = jsonData.timeline.rows[0].data.channelNo;
-                        dungeonName = jsonData.timeline.rows[0].data.dungeonName;
-                        itemName = jsonData.timeline.rows[0].data.itemName
+                        var getRows = jsonData.timeline.rows;
+                        getdate = getRows[0].date;
+                        console.log(getdate);
+                        var getData = getRows[0].data;
+                        channelName = getData.channelName;
+                        channelNo = getData.channelNo;
+                        dungeonName = getData.dungeonName;
+                        itemName = getData.itemName;
 
-                        botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n장소: ' + channelName + '\t' + channelNo + dungeonName + 'ch' + '\n아이템: ' + itemName;
+                        botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n채널: ' + channelName + '\t' + channelNo+'\n던전: ' + dungeonName + '\n아이템: ' + itemName;
                         console.log(botsay);
                         lastCall();
                     }
