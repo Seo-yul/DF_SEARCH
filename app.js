@@ -108,6 +108,8 @@ function setServer(server) {
     return engServer;
 }
 
+
+
 app.get('/keyboard', function (req, res) {
     var keyboard = {
         'type': 'text'
@@ -137,6 +139,11 @@ app.post('/message', function (req, res) {
         res.set({
             'content-type': 'application/json'
         }).send(JSON.stringify(answer));
+    }
+
+    function noDap() {
+        botsay = '서버를 정확히 입력해주세요. \n서버목록) 안톤,바칼,카인,카시,디레,힐더,프레,시로코 ';
+        lastCall();
     }
 
 
@@ -252,7 +259,7 @@ app.post('/message', function (req, res) {
                         dungeonName = getData.dungeonName;
                         itemName = getData.itemName;
 
-                        botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n채널: ' + channelName + '\t' + channelNo+'\n던전: ' + dungeonName + '\n아이템: ' + itemName;
+                        botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n채널: ' + channelName + '\t' + channelNo + '\n던전: ' + dungeonName + '\n아이템: ' + itemName;
                         console.log(botsay);
                         lastCall();
                     }
@@ -278,21 +285,37 @@ app.post('/message', function (req, res) {
 
         if (findex[0] == 1) {//캐릭터검색 호출
             serverName = setServer(findex[1]);
-            characterName = encodeURIComponent(findex[2]);
-            basicCharaterSearch();
-            console.log('캐릭터검색 호출 끝');
+            if (serverName == 'unknown') {
+                noDap();
+                console.log('캐릭터검색 호출 서버명 에러');
+            } else {
+                characterName = encodeURIComponent(findex[2]);
+                basicCharaterSearch();
+                console.log('캐릭터검색 호출 끝');
+            }
+
         }
         else if (findex[0] == 2) {//캐릭터정보 호출
             serverName = setServer(findex[1]);
-            characterName = encodeURIComponent(findex[2]);
-            infoCharaterSearch()
-            console.log('캐릭터정보검색 호출 끝');
+            if (serverName == 'unknown') {
+                noDap();
+                console.log('캐릭터검색 호출 서버명 에러');
+            } else {
+                characterName = encodeURIComponent(findex[2]);
+                infoCharaterSearch()
+                console.log('캐릭터정보검색 호출 끝');
+            }
         }
         else if (findex[0] == 3) {//에픽획득정보 호출
             serverName = setServer(findex[1]);
-            characterName = encodeURIComponent(findex[2]);
-            getEpicInfo()
-            console.log('에픽정보호출 끝');
+            if (serverName == 'unknown') {
+                noDap();
+                console.log('캐릭터검색 호출 서버명 에러');
+            } else {
+                characterName = encodeURIComponent(findex[2]);
+                getEpicInfo()
+                console.log('에픽정보호출 끝');
+            }
         }
         else if (findex[0] == 4) {
             botsay = '아이템검색 제작중 입니다.';
