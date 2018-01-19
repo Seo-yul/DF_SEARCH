@@ -149,7 +149,7 @@ app.post('/message', function (req, res) {
 
     function basicCharaterSearch() { //캐릭터검색
         wordType = 'full';
-        botsay = '';
+        botsay = null;
         url = dnf + serverName + '/characters?characterName=' + characterName + '&limit=50&wordType=' + wordType + '&apikey=' + APIkey;
         request.get(url, function (error, res, body) {
 
@@ -167,7 +167,7 @@ app.post('/message', function (req, res) {
                     }
                 }
                 console.log('botsay=' + botsay);
-                if (botsay == null)
+                if (!botsay)
                     console.log('botsay is null');
                 lastCall();
             }
@@ -213,7 +213,7 @@ app.post('/message', function (req, res) {
 
                         botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공: ' + dok;
                         console.log(botsay);
-                        if (botsay == null)
+                        if (!botsay)
                             console.log('botsay is null');
                         lastCall();
                     }
@@ -264,7 +264,7 @@ app.post('/message', function (req, res) {
 
                         botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n채널: ' + channelName + '\t' + channelNo + '\n던전: ' + dungeonName + '\n아이템: ' + itemName;
                         console.log(botsay);
-                        if (botsay == null)
+                        if (!botsay)
                             console.log('botsay is null');
                         lastCall();
                     }
