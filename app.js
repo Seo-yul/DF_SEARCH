@@ -167,9 +167,13 @@ app.post('/message', function (req, res) {
                     }
                 }
                 console.log('botsay=' + botsay);
-                if (!botsay)
+                if (!botsay) {
+                    botsay = '해당 내용이 없습니다.';
+                    lastCall();
                     console.log('botsay is null');
-                lastCall();
+                } else {
+                    lastCall();
+                }
             }
             else {
                 setErrorTalk();
@@ -213,9 +217,13 @@ app.post('/message', function (req, res) {
 
                         botsay = '길드명: ' + guildName + '\n모험단: ' + adventureName + '\n닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n힘: ' + him + '\t지: ' + gy + '\n체: ' + chae + '\t정: ' + jung + '\n물공: ' + mul + '\n마공: ' + ma + '\n독공: ' + dok;
                         console.log(botsay);
-                        if (!botsay)
+                        if (!botsay) {
+                            botsay = '해당 내용이 없습니다.';
+                            lastCall();
                             console.log('botsay is null');
-                        lastCall();
+                        } else {
+                            lastCall();
+                        }
                     }
                     else {
                         setErrorTalk();
@@ -264,9 +272,13 @@ app.post('/message', function (req, res) {
 
                         botsay = '닉네임: ' + characterName + '\nLv: ' + level + '\n직업: ' + jobGrowName + '\n날짜: ' + getdate + '\n채널: ' + channelName + '\t' + channelNo + '\n던전: ' + dungeonName + '\n아이템: ' + itemName;
                         console.log(botsay);
-                        if (!botsay)
+                        if (!botsay) {
+                            botsay = '해당 내용이 없습니다.';
+                            lastCall();
                             console.log('botsay is null');
-                        lastCall();
+                        } else {
+                            lastCall();
+                        }
                     }
                     else {
                         setErrorTalk();
