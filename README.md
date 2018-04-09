@@ -1,5 +1,5 @@
 # DF_SEARCH
-using node.js, EC2
+using node.js, EC2, neople DNF API, KAKAO API
 
 본 소스코드는 네오플에서 서비스하는 던전앤파이터 API 와 메신저 카카오 챗봇 API를 이용한 코드입니다.
 </br> 
