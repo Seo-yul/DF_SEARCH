@@ -18,7 +18,7 @@ KAKAO 플러스친구 메시지 -> EC2 node.JS 서버 -> request, response -> �
 
 <b>3. 작성자</b>
 <pre> 
-seoyul yoon
+yoon seoyul
                 04. 09. 2018
 </pre>
 ***
